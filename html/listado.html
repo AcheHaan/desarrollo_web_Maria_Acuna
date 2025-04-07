@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Actividades</title>
+  <link rel="stylesheet" href="../css/listado.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <h1>Listado de Actividades</h1>
+
+  <!-- Tabla de actividades -->
+  <table id="tabla-actividades">
+    <thead>
+      <tr>
+        <th>Inicio</th>
+        <th>Término</th>
+        <th>Comuna</th>
+        <th>Sector</th>
+        <th>Tema</th>
+        <th>Nombre</th>
+        <th>Organizador</th>
+        <th>Total Fotos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Las filas se generan aquí dinámicamente con JS -->
+    </tbody>
+  </table>
+  <button onclick="location.href='../html/index.html'" class="boton-link">
+    <i class="fas fa-home"></i> Volver a la Portada
+  </button>
+
+  <!-- Vista detallada de actividad -->
+  <div id="detalle-actividad" style="display: none;">
+    <h2>Detalle de Actividad</h2>
+    <div id="info-actividad"></div>
+    <div id="galeria-fotos"></div>
+    <button id="volver-listado">
+        <i class="fas fa-arrow-left"></i> Volver al listado
+    </button>
+    <button onclick="location.href='index.html'" class="boton-link">
+        <i class="fas fa-house"></i> Volver a la portada
+    </button>
+  </div>
+
+  <!-- Popup para foto grande -->
+  <div id="popup-foto" style="display: none;">
+    <img id="foto-grande" src="" width="800" height="600">
+    <button id="cerrar-popup">
+        <i class="fas fa-xmark"></i> Cerrar
+    </button>
+  </div>
+
+  <script src="../js/listado.js"></script>
+  <script src="../js/actividades.js"></script>
+  
+</body>
+</html>
