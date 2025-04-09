@@ -1,17 +1,15 @@
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Fredoka&display=swap');
 
-/* Font Awesome para íconos si los necesitas más adelante */
+/* Font Awesome para íconos (si los necesitas más adelante) */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body general */
 body {
   font-family: 'Fredoka', sans-serif;
   background-color: #fffafc;
