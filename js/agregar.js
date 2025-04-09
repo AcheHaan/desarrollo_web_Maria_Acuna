@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fechaInicio = document.getElementById('fecha-inicio');
   const fechaFin = document.getElementById('fecha-fin');
 
-  // Rellenar combos región-comuna
+  // Rellenar región-comuna
   Object.keys(region_comuna).forEach(region => {
     const option = document.createElement('option');
     option.value = region;
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mostrar input de contacto si se selecciona red social
+  // Mostrar input para red social
   contactarSelect.addEventListener('change', () => {
     if (contactarSelect.value) {
       contactarInfo.style.display = 'inline-block';
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mostrar input de tema personalizado si selecciona "otro"
+  // Mostrar input de tema "otro"
   temaSelect.addEventListener('change', () => {
     const mostrarOtro = temaSelect.value === 'otro';
     otroTemaInput.style.display = mostrarOtro ? 'inline-block' : 'none';
@@ -59,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mostrarOtro) otroTemaInput.value = '';
   });
 
-  // Prellenar fecha actual en inicio y fin (+3 horas)
+  // Prellenar fecha
   const ahora = new Date();
   const formato = (d) => d.toISOString().slice(0, 16);
   fechaInicio.value = formato(ahora);
   const fin = new Date(ahora.getTime() + 3 * 60 * 60 * 1000);
   fechaFin.value = formato(fin);
 
-  // Agregar fotos dinámicamente (máx 5)
+  // Agregar fotos
   agregarFotoBtn.addEventListener('click', () => {
     const actuales = document.querySelectorAll('input[type="file"]');
     if (actuales.length >= 5) {
@@ -137,6 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Volver a portada
   volverPortadaBtn.addEventListener('click', () => {
-    window.location.href = '../html/index.html'; // o la ruta que uses
+    window.location.href = '../html/index.html';
   });
 });
