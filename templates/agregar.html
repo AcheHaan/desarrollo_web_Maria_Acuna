@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Informar Actividad - Actividades Recreativas</title>
-  <link rel="stylesheet" href="../css/agregar.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/agregar.css') }}">
 </head>
 <body>
   <header>
@@ -106,7 +106,7 @@
 
     <div id="mensaje-exito" style="display:none;">
       <p>Hemos recibido su información, muchas gracias y suerte en su actividad.</p>
-      <button id="volver-portada">Volver a la portada</button>
+      <button id="volver-portada" onclick="window.location.href='{{ url_for('portada') }}'">Volver a la portada</button>
     </div>
   </main>
 
@@ -114,7 +114,7 @@
     <p>© 2025 Actividades Recreativas</p>
   </footer>
 
-  <script src="../js/agregar.js"></script>
-  <script src="../js/region_comuna.js"></script>
+  <script src="{{ url_for('static', filename='js/agregar.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/region_comuna.js') }}"></script>
 </body>
 </html>

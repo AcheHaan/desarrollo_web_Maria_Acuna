@@ -135,8 +135,4 @@ document.addEventListener('DOMContentLoaded', () => {
     formulario.style.display = 'block';
   });
 
-  // Volver a portada
-  volverPortadaBtn.addEventListener('click', () => {
-    window.location.href = '../html/index.html';
-  });
 });

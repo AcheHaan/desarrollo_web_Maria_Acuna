@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Listado de Actividades</title>
-  <link rel="stylesheet" href="../css/listado.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/listado.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
@@ -25,12 +25,13 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Las filas se generan aquí dinámicamente con JS -->
+      
     </tbody>
   </table>
-  <button onclick="location.href='../html/index.html'" class="boton-link">
+  <button onclick="location.href='{{ url_for('portada') }}'" class="boton-link">
     <i class="fas fa-home"></i> Volver a la Portada
   </button>
+  
 
   <!-- Vista detallada de actividad -->
   <div id="detalle-actividad" style="display: none;">
@@ -40,9 +41,10 @@
     <button id="volver-listado">
         <i class="fas fa-arrow-left"></i> Volver al listado
     </button>
-    <button onclick="location.href='index.html'" class="boton-link">
-        <i class="fas fa-house"></i> Volver a la portada
+    <button onclick="location.href='{{ url_for('portada') }}'" class="boton-link">
+      <i class="fas fa-house"></i> Volver a la portada
     </button>
+    
   </div>
 
   <!-- Popup para foto grande -->
@@ -53,8 +55,8 @@
     </button>
   </div>
 
-  <script src="../js/listado.js"></script>
-  <script src="../js/actividades.js"></script>
-  
+  <script src="{{ url_for('static', filename='js/listado.js') }}"></script>
+  <div id="paginacion" style="margin-top: 20px; text-align: center;"></div>
+
 </body>
 </html>
