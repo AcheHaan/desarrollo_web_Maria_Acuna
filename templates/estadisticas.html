@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Estadísticas de Actividades</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estadisticas.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1><i class="fas fa-chart-line"></i> Estadísticas de Actividades</h1>
+
+  <section>
+    <h2>Actividades por Día</h2>
+    <canvas id="graficoLineas"></canvas>
+  </section>
+
+  <section>
+    <h2>Actividades por Tipo</h2>
+    <canvas id="graficoTorta"></canvas>
+  </section>
+
+  <section>
+    <h2>Actividades por Momento del Día (por mes)</h2>
+    <canvas id="graficoBarras"></canvas>
+  </section>
+
+  <div class="volver">
+    <li><a href="{{ url_for('portada') }}"><i class="fas fa-house"></i> Volver a la portada</a></li>
+  </div>
+
+
+  <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+</body>
+</html>
