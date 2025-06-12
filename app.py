@@ -1,8 +1,14 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask import jsonify
 from sqlalchemy.orm import joinedload
-from models import db, Actividad, Comuna
+from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region
+from werkzeug.utils import secure_filename
+import os
+from datetime import datetime
 
+
+UPLOAD_FOLDER = os.path.join("static", "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 
@@ -20,7 +26,8 @@ def portada():
 
 @app.route("/agregar")
 def agregar():
-    return render_template("agregar.html")
+    regiones = Region.query.order_by(Region.nombre).all()
+    return render_template("agregar.html", regiones=regiones)
 
 @app.route("/listado")
 def listado():
@@ -72,6 +79,102 @@ def api_actividades():
         "pagina_actual": actividades.page
     })
 
+@app.route("/guardar_actividad", methods=["POST"])
+def guardar_actividad():
+    print("Formulario recibido")
+    errores = []
+
+    # === Validación del lado del servidor ===
+    comuna_id = request.form.get("comuna")
+    nombre = request.form.get("nombre")
+    email = request.form.get("email")
+    celular = request.form.get("celular")
+    sector = request.form.get("sector")
+    contactar = request.form.get("contactar")
+    contactar_info = request.form.get("contactar-info")
+    fecha_inicio = request.form.get("fecha-inicio")
+    fecha_fin = request.form.get("fecha-fin")
+    descripcion = request.form.get("descripcion")
+    tema = request.form.get("tema")
+    otro_tema = request.form.get("otro-tema")
+
+    fotos = request.files.getlist("foto")
+
+    if not all([comuna_id, nombre, email, fecha_inicio, tema]):
+        errores.append("Faltan campos obligatorios.")
+
+    if not fotos:
+        errores.append("Debe subir al menos una foto.")
+
+    try:
+        dt_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%dT%H:%M")
+        dt_fin = datetime.strptime(fecha_fin, "%Y-%m-%dT%H:%M") if fecha_fin else None
+    except ValueError:
+        errores.append("Fechas inválidas.")
+
+    if errores:
+        regiones = Region.query.order_by(Region.nombre).all()
+        return render_template("agregar.html", errores=errores, regiones=regiones)
+
+
+    # === Guardar en la base de datos ===
+    actividad = Actividad(
+        comuna_id=int(comuna_id),
+        sector=sector,
+        nombre=nombre,
+        email=email,
+        celular=celular,
+        dia_hora_inicio=dt_inicio,
+        dia_hora_termino=dt_fin,
+        descripcion=descripcion
+    )
+    db.session.add(actividad)
+    db.session.flush()  # Necesario para obtener el id de la actividad
+
+    # === Temas ===
+    tema_entry = ActividadTema(
+        tema=tema,
+        glosa_otro=otro_tema if tema == "otro" else None,
+        actividad_id=actividad.id
+    )
+    db.session.add(tema_entry)
+
+    # === ContactarPor ===
+    if contactar and contactar_info:
+        contacto = ContactarPor(
+            nombre=contactar,
+            identificador=contactar_info,
+            actividad_id=actividad.id
+        )
+        db.session.add(contacto)
+
+    # === Archivos (fotos) ===
+    for foto in fotos:
+        if foto and foto.filename:
+            nombre_archivo = secure_filename(foto.filename)
+            ruta = f"{actividad.id}_{nombre_archivo}"
+            foto.save(os.path.join(UPLOAD_FOLDER, ruta))
+
+            nueva_foto = Foto(
+                ruta_archivo=ruta,
+                nombre_archivo=nombre_archivo,
+                actividad_id=actividad.id
+            )
+            db.session.add(nueva_foto)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return f"Ocurrió un error al guardar en la base de datos: {e}"
+
+    return redirect(url_for("portada"))
+
+@app.route("/api/comunas/<int:region_id>")
+def obtener_comunas(region_id):
+    comunas = Comuna.query.filter_by(region_id=region_id).all()
+    comunas_json = [{"id": c.id, "nombre": c.nombre} for c in comunas]
+    return jsonify(comunas_json)
 
 if __name__ == '__main__':
     # Necesario para trabajar con SQLAlchemy fuera del contexto de una petición

@@ -11,13 +11,27 @@
   </header>
 
   <main>
-    <form id="formulario-actividad" action="#" method="POST">
+    {% if errores %}
+      <div class="errores">
+        <ul>
+          {% for error in errores %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form id="formulario-actividad" action="{{ url_for('guardar_actividad') }}" method="POST" enctype="multipart/form-data">
       <fieldset>
         <legend>Información del Lugar</legend>
         <label for="region">Región:</label>
         <select id="region" name="region" required>
-            <option value="">Seleccione una región</option>
+          <option value="">Seleccione una región</option>
+          {% for region in regiones %}
+            <option value="{{ region.id }}">{{ region.nombre }}</option>
+          {% endfor %}
         </select>
+
 
         <label for="comuna">Comuna:</label>
         <select id="comuna" name="comuna" required disabled>
@@ -73,6 +87,7 @@
 
         <label for="tema">Tema:</label>
         <select id="tema" name="tema" required>
+          <option value="" disabled selected>Seleccione un tema</option>
           <option value="musica">Música</option>
           <option value="deporte">Deporte</option>
           <option value="ciencias">Ciencias</option>
@@ -115,6 +130,5 @@
   </footer>
 
   <script src="{{ url_for('static', filename='js/agregar.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/region_comuna.js') }}"></script>
 </body>
 </html>

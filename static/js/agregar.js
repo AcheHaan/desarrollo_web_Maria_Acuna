@@ -17,25 +17,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const fechaInicio = document.getElementById('fecha-inicio');
   const fechaFin = document.getElementById('fecha-fin');
 
-  // Rellenar región-comuna
-  Object.keys(region_comuna).forEach(region => {
-    const option = document.createElement('option');
-    option.value = region;
-    option.textContent = region;
-    regionSelect.appendChild(option);
-  });
+  // Cargar regiones desde el servidor si es necesario
+  // Aquí puedes hacer un fetch si también quieres cargar las regiones dinámicamente
+  // Por ahora se asume que las regiones ya están en el select
 
-  regionSelect.addEventListener('change', () => {
-    const region = regionSelect.value;
-    comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
-    comunaSelect.disabled = !region;
-    if (region) {
-      region_comuna[region].forEach(comuna => {
-        const option = document.createElement('option');
-        option.value = comuna;
-        option.textContent = comuna;
-        comunaSelect.appendChild(option);
-      });
+  // Manejar cambio de región → cargar comunas
+  regionSelect.addEventListener("change", async () => {
+    const regionId = regionSelect.value;
+    comunaSelect.innerHTML = '<option value="">Cargando comunas...</option>';
+    comunaSelect.disabled = true;
+
+    if (regionId) {
+      try {
+        const response = await fetch(`/api/comunas/${regionId}`);
+        const comunas = await response.json();
+
+        comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+        comunas.forEach(comuna => {
+          const option = document.createElement("option");
+          option.value = comuna.id;
+          option.textContent = comuna.nombre;
+          comunaSelect.appendChild(option);
+        });
+
+        comunaSelect.disabled = false;
+      } catch (error) {
+        comunaSelect.innerHTML = '<option value="">Error al cargar comunas</option>';
+        console.error("Error al cargar comunas:", error);
+      }
+    } else {
+      comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+      comunaSelect.disabled = true;
     }
   });
 
@@ -84,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
   formulario.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    // Validar fotos
     const fotos = document.querySelectorAll('input[type="file"]');
     let hayFoto = false;
     fotos.forEach(f => {
@@ -95,13 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Validar red social y campo asociado
     if (contactarSelect.value && contactarInfo.value.trim().length < 4) {
       alert('Ingrese al menos 4 caracteres para el ID o URL de contacto.');
       return;
     }
 
-    // Validar "otro tema"
     if (temaSelect.value === 'otro') {
       const tema = otroTemaInput.value.trim();
       if (tema.length < 3 || tema.length > 15) {
@@ -110,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Validar fechas
     const inicio = new Date(fechaInicio.value);
     const termino = new Date(fechaFin.value);
     if (fechaFin.value && termino <= inicio) {
@@ -118,18 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Todo correcto → mostrar confirmación
     mensajeConfirmacion.style.display = 'block';
     formulario.style.display = 'none';
   });
 
-  // Confirmar
   confirmarBtn.addEventListener('click', () => {
     mensajeConfirmacion.style.display = 'none';
     mensajeExito.style.display = 'block';
+    formulario.submit();
   });
 
-  // Cancelar confirmación
   cancelarBtn.addEventListener('click', () => {
     mensajeConfirmacion.style.display = 'none';
     formulario.style.display = 'block';
