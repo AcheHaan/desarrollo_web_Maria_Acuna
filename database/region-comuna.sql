@@ -1,36 +1,3 @@
-
-INSERT INTO actividad (id,comuna_id, sector, nombre, email, celular, dia_hora_inicio, dia_hora_termino, descripcion) VALUES
-(1,10301, 'Centro', 'Taller de Música', 'musica@correo.cl', '912345678', '2025-05-28 10:00:00', '2025-05-28 12:00:00', 'Clases de instrumentos'),
-(2,10301, 'Parque Bustamante', 'Clase de Yoga', 'yoga@correo.cl', '912345679', '2025-05-27 08:00:00', NULL, 'Sesión matutina de yoga'),
-(3,10301, NULL, 'Charla de Tecnología', 'tech@correo.cl', '912345680', '2025-05-26 18:00:00', '2025-05-26 20:00:00', 'Avances en IA'),
-(4,10301, 'Barrio Lastarria', 'Cine al aire libre', 'cine@correo.cl', NULL, '2025-05-25 20:00:00', NULL, 'Proyección de películas'),
-(5,10301, NULL, 'Feria de Ciencia', 'ciencia@correo.cl', '912345681', '2025-05-24 14:00:00', '2025-05-24 18:00:00', 'Experimentos y stands interactivos'),
-(6,10301, 'NULL', 'Feria de arte', 'arte@correo.cl', '912345681', '2025-05-24 14:00:00', '2025-05-24 18:00:00', 'feria de artistas idependientes');
-
-INSERT INTO actividad_tema (tema, glosa_otro, actividad_id) VALUES
-('música', NULL, 1),
-('deporte', NULL, 2),
-('tecnología', NULL, 3),
-('juegos', NULL, 4),
-('ciencias', NULL, 5),
-('juegos', NULL, 6);
-
-INSERT INTO foto (ruta_archivo, nombre_archivo, actividad_id) VALUES
-('/static/images/musica1.jpg', 'musica1.jpg', 1),
-('/static/images/yoga1.jpg', 'yoga1.jpg', 2),
-('/static/images/tech1.jpg', 'tech1.jpg', 3),
-('/static/images/cine1.jpg', 'cine1.jpg', 4),
-('/static/images/ciencia1.jpg', 'ciencia1.jpg', 5),
-('/static/images/ARTE1.jpg', 'arte1.jpg', 6);
-
-INSERT INTO contactar_por (nombre,identificador,actividad_id) VALUES
-('instagram', 'aria arenas', 1),
-('tiktok', '@tistos', 2),
-('whatsapp', '91234567', 3),
-('X', '@tuitah', 4),
-('telegram', 'canal de ciencias', 5),
-('X', '@snapme', 6);
-
 INSERT INTO region (id, nombre) VALUES (1,'Región de Tarapacá');
 INSERT INTO region (id, nombre) VALUES (2,'Región de Antofagasta');
 INSERT INTO region (id, nombre) VALUES (3,'Región de Atacama');

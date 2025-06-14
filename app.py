@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask import jsonify
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload
-from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region
+from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region, Comentario
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
@@ -175,6 +176,87 @@ def obtener_comunas(region_id):
     comunas = Comuna.query.filter_by(region_id=region_id).all()
     comunas_json = [{"id": c.id, "nombre": c.nombre} for c in comunas]
     return jsonify(comunas_json)
+
+
+# Actividades por día
+@app.route("/api/estadisticas/por-dia")
+def estadisticas_por_dia():
+    resultados = (
+        db.session.query(func.date(Actividad.dia_hora_inicio), func.count())
+        .group_by(func.date(Actividad.dia_hora_inicio))
+        .all()
+    )
+    datos = [{"fecha": fecha.strftime("%d/%m"), "cantidad": cantidad} for fecha, cantidad in resultados]
+    return jsonify(datos)
+
+# Actividades por tipo
+@app.route("/api/estadisticas/por-tipo")
+def estadisticas_por_tipo():
+    resultados = (
+        db.session.query(ActividadTema.tema, func.count())
+        .group_by(ActividadTema.tema)
+        .all()
+    )
+    datos = [{"tema": tema, "cantidad": cantidad} for tema, cantidad in resultados]
+    return jsonify(datos)
+
+# Actividades por mes y momento del día
+@app.route("/api/estadisticas/por-horario")
+def estadisticas_por_horario():
+    actividades = Actividad.query.all()
+
+    conteo = {}
+    for act in actividades:
+        mes = act.dia_hora_inicio.strftime("%B")
+        hora = act.dia_hora_inicio.hour
+
+        momento = (
+            "mañana" if 6 <= hora < 12 else
+            "mediodía" if 12 <= hora < 18 else
+            "tarde"
+        )
+
+        if mes not in conteo:
+            conteo[mes] = {"mañana": 0, "mediodía": 0, "tarde": 0}
+
+        conteo[mes][momento] += 1
+
+    datos = [{"mes": mes, **momentos} for mes, momentos in conteo.items()]
+    return jsonify(datos)
+
+
+@app.route("/tarea2/comentarios/<int:actividad_id>")
+def obtener_comentarios(actividad_id):
+    comentarios = Comentario.query.filter_by(actividad_id=actividad_id)\
+                    .order_by(Comentario.fecha.desc()).all()
+    return jsonify([{
+      "nombre": c.nombre,
+      "texto": c.texto,
+      "fecha": c.fecha.strftime("%Y-%m-%d %H:%M")
+    } for c in comentarios])
+
+@app.route("/tarea2/comentario/agregar", methods=["POST"])
+def agregar_comentario():
+    data = request.get_json()
+    nombre = data.get("nombre", "").strip()
+    texto = data.get("texto", "").strip()
+    actividad_id = data.get("actividad_id")
+
+    if not (3 <= len(nombre) <= 80):
+        return jsonify({"success": False, "error": "Nombre debe tener entre 3 y 80 caracteres."})
+    if len(texto) < 5:
+        return jsonify({"success": False, "error": "Comentario debe tener al menos 5 caracteres."})
+
+    nuevo = Comentario(
+        nombre=nombre,
+        texto=texto,
+        fecha=datetime.now(),
+        actividad_id=actividad_id
+    )
+    db.session.add(nuevo)
+    db.session.commit()
+    return jsonify({"success": True})
+
 
 if __name__ == '__main__':
     # Necesario para trabajar con SQLAlchemy fuera del contexto de una petición

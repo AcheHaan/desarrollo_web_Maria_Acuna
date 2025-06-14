@@ -38,6 +38,26 @@
     <h2>Detalle de Actividad</h2>
     <div id="info-actividad"></div>
     <div id="galeria-fotos"></div>
+    <div id="comentarios" style="margin-top: 20px;">
+      <h3>Comentarios</h3>
+
+      <!-- Formulario -->
+      <form id="form-comentario">
+        <input type="hidden" id="comentario-actividad-id">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required minlength="3" maxlength="80"><br>
+
+        <label>Comentario:</label><br>
+        <textarea id="texto" rows="4" cols="50" required minlength="5"></textarea><br>
+
+        <button type="submit">Agregar comentario</button>
+        <p id="comentario-error" style="color: red;"></p>
+      </form>
+
+      <!-- Listado -->
+      <ul id="lista-comentarios"></ul>
+    </div>
+
     <button id="volver-listado">
         <i class="fas fa-arrow-left"></i> Volver al listado
     </button>

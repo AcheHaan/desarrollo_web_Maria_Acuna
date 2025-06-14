@@ -101,6 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       galeriaDiv.appendChild(img);
     });
+    // Al final de mostrarDetalle
+    document.getElementById("comentario-actividad-id").value = actividad.id;
+    cargarComentarios(actividad.id);
+
   };
 
   volverListado.addEventListener("click", () => {
@@ -116,4 +120,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Cargar la primera página al inicio
   cargarActividades(1);
+});
+
+async function cargarComentarios(actividadId) {
+  const res = await fetch(`/tarea2/comentarios/${actividadId}`);
+  const comentarios = await res.json();
+  const lista = document.getElementById("lista-comentarios");
+  lista.innerHTML = "";
+  comentarios.forEach(c => {
+    const li = document.createElement("li");
+    li.textContent = `${c.fecha} — ${c.nombre}: ${c.texto}`;
+    lista.appendChild(li);
+  });
+}
+
+document.getElementById("form-comentario").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("nombre").value.trim();
+  const texto = document.getElementById("texto").value.trim();
+  const actividadId = document.getElementById("comentario-actividad-id").value;
+
+  if (nombre.length < 3 || nombre.length > 80 || texto.length < 5) {
+    document.getElementById("comentario-error").textContent = "Revise los datos ingresados.";
+    return;
+  }
+
+  const res = await fetch("/tarea2/comentario/agregar", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({nombre, texto, actividad_id: actividadId})
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    document.getElementById("comentario-error").textContent = "";
+    e.target.reset();
+    cargarComentarios(actividadId);
+  } else {
+    document.getElementById("comentario-error").textContent = data.error;
+  }
 });

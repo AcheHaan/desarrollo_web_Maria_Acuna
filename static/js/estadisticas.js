@@ -1,73 +1,84 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Gráfico de líneas: Actividades por día
-    new Chart(document.getElementById("graficoLineas"), {
-      type: "line",
-      data: {
-        labels: ["01/06", "02/06", "03/06", "04/06", "05/06", "06/06", "07/06"],
-        datasets: [{
-          label: "Actividades por día",
-          data: [2, 4, 3, 5, 1, 3, 2],
-          fill: false,
-          borderColor: "#ff69b4",
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          title: { display: false }
+  // === Gráfico de líneas ===
+  fetch("/api/estadisticas/por-dia")
+    .then(res => res.json())
+    .then(data => {
+      const labels = data.map(d => d.fecha);
+      const valores = data.map(d => d.cantidad);
+      new Chart(document.getElementById("graficoLineas"), {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "Actividades por día",
+            data: valores,
+            fill: false,
+            borderColor: "#ff69b4",
+            tension: 0.3
+          }]
         }
-      }
+      });
     });
-  
-    // Gráfico de torta: Actividades por tipo
-    new Chart(document.getElementById("graficoTorta"), {
-      type: "pie",
-      data: {
-        labels: ["Música", "Deporte", "Ciencias", "Tecnología", "Juegos", "Comida"],
-        datasets: [{
-          label: "Actividades por tipo",
-          data: [4, 3, 2, 3, 1, 2],
-          backgroundColor: ["#ffb3c6", "#caffbf", "#a0c4ff", "#bdb2ff", "#ffc6ff", "#fdffb6"]
-        }]
-      },
-      options: {
-        responsive: true
-      }
+
+  // === Gráfico de torta ===
+  fetch("/api/estadisticas/por-tipo")
+    .then(res => res.json())
+    .then(data => {
+      const labels = data.map(d => d.tema);
+      const valores = data.map(d => d.cantidad);
+      new Chart(document.getElementById("graficoTorta"), {
+        type: "pie",
+        data: {
+          labels,
+          datasets: [{
+            label: "Actividades por tipo",
+            data: valores,
+            backgroundColor: [
+              "#ffb3c6", "#caffbf", "#a0c4ff", "#bdb2ff", "#ffc6ff", "#fdffb6", "#fcd5ce"
+            ]
+          }]
+        }
+      });
     });
-  
-    // Gráfico de barras: Actividades por mes y momento del día
-    new Chart(document.getElementById("graficoBarras"), {
-      type: "bar",
-      data: {
-        labels: ["Abril", "Mayo", "Junio"],
-        datasets: [
-          {
-            label: "Mañana",
-            data: [2, 3, 4],
-            backgroundColor: "#ffafcc"
-          },
-          {
-            label: "Mediodía",
-            data: [1, 2, 3],
-            backgroundColor: "#cdb4db"
-          },
-          {
-            label: "Tarde",
-            data: [3, 1, 2],
-            backgroundColor: "#b5ead7"
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
+
+  // === Gráfico de barras ===
+  fetch("/api/estadisticas/por-horario")
+    .then(res => res.json())
+    .then(data => {
+      const labels = data.map(d => d.mes);
+      const manana = data.map(d => d.mañana);
+      const medio = data.map(d => d.mediodía);
+      const tarde = data.map(d => d.tarde);
+
+      new Chart(document.getElementById("graficoBarras"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Mañana",
+              data: manana,
+              backgroundColor: "#a0c4ff"
+            },
+            {
+              label: "Mediodía",
+              data: medio,
+              backgroundColor: "#ffb703"
+            },
+            {
+              label: "Tarde",
+              data: tarde,
+              backgroundColor: "#ff6d00"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { stacked: true },
+            y: { beginAtZero: true, stacked: true }
           }
         }
-      }
+      });
     });
-  });
-  
+});
