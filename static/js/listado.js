@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${actividad.sector || "-"}</td>
         <td>${actividad.temaOtro || actividad.tema}</td>
         <td>${actividad.nombre}</td>
-        <td>${actividad.organizador}</td>
         <td>${actividad.fotos.length}</td>
       `;
       fila.addEventListener("click", () => mostrarDetalle(actividad));
@@ -63,11 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     infoDiv.innerHTML = `
-      <p><strong>Nombre:</strong> ${actividad.nombre}</p>
       <p><strong>Región:</strong> ${actividad.region}</p>
       <p><strong>Comuna:</strong> ${actividad.comuna}</p>
       <p><strong>Sector:</strong> ${actividad.sector || "-"}</p>
-      <p><strong>Organizador:</strong> ${actividad.organizador}</p>
+      <p><strong>Nombre Organizador:</strong> ${actividad.nombre}</p>
       <p><strong>Email:</strong> ${actividad.email}</p>
       <p><strong>Celular:</strong> ${actividad.celular || "-"}</p>
       <p><strong>Inicio:</strong> ${actividad.inicio}</p>
@@ -101,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       galeriaDiv.appendChild(img);
     });
-    // Al final de mostrarDetalle
+
     document.getElementById("comentario-actividad-id").value = actividad.id;
     cargarComentarios(actividad.id);
 
@@ -118,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fotoGrande.src = "";
   });
 
-  // Cargar la primera página al inicio
   cargarActividades(1);
 });
 

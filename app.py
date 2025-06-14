@@ -16,7 +16,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://cc5002:programacionweb@localhost:3306/tarea2'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Registra la app con la instancia de SQLAlchemy
 db.init_app(app)
 
 @app.route('/')
@@ -48,7 +47,7 @@ def api_actividades():
                    .options(joinedload(Actividad.comuna).joinedload(Comuna.region),
                             joinedload(Actividad.fotos),
                             joinedload(Actividad.temas),
-                            joinedload(Actividad.contactos))  # <- importante
+                            joinedload(Actividad.contactos))
                    .paginate(page=pagina, per_page=por_pagina, error_out=False))
 
     actividades_json = []
@@ -58,7 +57,6 @@ def api_actividades():
             "region": act.comuna.region.nombre,
             "comuna": act.comuna.nombre,
             "sector": act.sector,
-            "organizador": act.email,
             "email": act.email,
             "celular": act.celular,
             "contactarPor": [
@@ -117,8 +115,6 @@ def guardar_actividad():
         regiones = Region.query.order_by(Region.nombre).all()
         return render_template("agregar.html", errores=errores, regiones=regiones)
 
-
-    # === Guardar en la base de datos ===
     actividad = Actividad(
         comuna_id=int(comuna_id),
         sector=sector,
@@ -130,9 +126,8 @@ def guardar_actividad():
         descripcion=descripcion
     )
     db.session.add(actividad)
-    db.session.flush()  # Necesario para obtener el id de la actividad
+    db.session.flush()
 
-    # === Temas ===
     tema_entry = ActividadTema(
         tema=tema,
         glosa_otro=otro_tema if tema == "otro" else None,
@@ -140,7 +135,6 @@ def guardar_actividad():
     )
     db.session.add(tema_entry)
 
-    # === ContactarPor ===
     if contactar and contactar_info:
         contacto = ContactarPor(
             nombre=contactar,
@@ -149,7 +143,6 @@ def guardar_actividad():
         )
         db.session.add(contacto)
 
-    # === Archivos (fotos) ===
     for foto in fotos:
         if foto and foto.filename:
             nombre_archivo = secure_filename(foto.filename)
@@ -178,7 +171,6 @@ def obtener_comunas(region_id):
     return jsonify(comunas_json)
 
 
-# Actividades por día
 @app.route("/api/estadisticas/por-dia")
 def estadisticas_por_dia():
     resultados = (
@@ -189,7 +181,6 @@ def estadisticas_por_dia():
     datos = [{"fecha": fecha.strftime("%d/%m"), "cantidad": cantidad} for fecha, cantidad in resultados]
     return jsonify(datos)
 
-# Actividades por tipo
 @app.route("/api/estadisticas/por-tipo")
 def estadisticas_por_tipo():
     resultados = (
@@ -200,7 +191,6 @@ def estadisticas_por_tipo():
     datos = [{"tema": tema, "cantidad": cantidad} for tema, cantidad in resultados]
     return jsonify(datos)
 
-# Actividades por mes y momento del día
 @app.route("/api/estadisticas/por-horario")
 def estadisticas_por_horario():
     actividades = Actividad.query.all()
@@ -259,7 +249,6 @@ def agregar_comentario():
 
 
 if __name__ == '__main__':
-    # Necesario para trabajar con SQLAlchemy fuera del contexto de una petición
     with app.app_context():
-        db.create_all()  # Solo si necesitas crear las tablas, si no ya están, puedes omitirlo
+        db.create_all()
     app.run(debug=True)
