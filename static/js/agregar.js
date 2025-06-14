@@ -17,11 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fechaInicio = document.getElementById('fecha-inicio');
   const fechaFin = document.getElementById('fecha-fin');
 
-  // Cargar regiones desde el servidor si es necesario
-  // Aquí puedes hacer un fetch si también quieres cargar las regiones dinámicamente
-  // Por ahora se asume que las regiones ya están en el select
-
-  // Manejar cambio de región → cargar comunas
   regionSelect.addEventListener("change", async () => {
     const regionId = regionSelect.value;
     comunaSelect.innerHTML = '<option value="">Cargando comunas...</option>';
@@ -51,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mostrar input para red social
   contactarSelect.addEventListener('change', () => {
     if (contactarSelect.value) {
       contactarInfo.style.display = 'inline-block';
@@ -63,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mostrar input de tema "otro"
   temaSelect.addEventListener('change', () => {
     const mostrarOtro = temaSelect.value === 'otro';
     otroTemaInput.style.display = mostrarOtro ? 'inline-block' : 'none';
@@ -71,14 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mostrarOtro) otroTemaInput.value = '';
   });
 
-  // Prellenar fecha
   const ahora = new Date();
   const formato = (d) => d.toISOString().slice(0, 16);
   fechaInicio.value = formato(ahora);
   const fin = new Date(ahora.getTime() + 3 * 60 * 60 * 1000);
   fechaFin.value = formato(fin);
 
-  // Agregar fotos
   agregarFotoBtn.addEventListener('click', () => {
     const actuales = document.querySelectorAll('input[type="file"]');
     if (actuales.length >= 5) {
@@ -92,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('foto').parentNode.insertBefore(nuevoInput, agregarFotoBtn);
   });
 
-  // Validaciones al enviar
   formulario.addEventListener('submit', (e) => {
     e.preventDefault();
 

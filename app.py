@@ -6,6 +6,7 @@ from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Reg
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from utils import sanitizar_texto
 
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
@@ -83,19 +84,19 @@ def guardar_actividad():
     print("Formulario recibido")
     errores = []
 
-    # === Validación del lado del servidor ===
     comuna_id = request.form.get("comuna")
-    nombre = request.form.get("nombre")
-    email = request.form.get("email")
-    celular = request.form.get("celular")
-    sector = request.form.get("sector")
-    contactar = request.form.get("contactar")
-    contactar_info = request.form.get("contactar-info")
     fecha_inicio = request.form.get("fecha-inicio")
     fecha_fin = request.form.get("fecha-fin")
-    descripcion = request.form.get("descripcion")
+    nombre = sanitizar_texto(request.form.get("nombre"))
+    email = sanitizar_texto(request.form.get("email"))
+    celular = sanitizar_texto(request.form.get("celular"))
+    sector = sanitizar_texto(request.form.get("sector"))
+    contactar = request.form.get("contactar")  # Nombre del medio (ej: WhatsApp)
+    contactar_info = sanitizar_texto(request.form.get("contactar-info"))
+    descripcion = sanitizar_texto(request.form.get("descripcion"))
     tema = request.form.get("tema")
-    otro_tema = request.form.get("otro-tema")
+    otro_tema = sanitizar_texto(request.form.get("otro-tema"))
+
 
     fotos = request.files.getlist("foto")
 
@@ -228,8 +229,9 @@ def obtener_comentarios(actividad_id):
 @app.route("/tarea2/comentario/agregar", methods=["POST"])
 def agregar_comentario():
     data = request.get_json()
-    nombre = data.get("nombre", "").strip()
-    texto = data.get("texto", "").strip()
+    nombre = sanitizar_texto(data.get("nombre", ""))
+    texto = sanitizar_texto(data.get("texto", ""))
+
     actividad_id = data.get("actividad_id")
 
     if not (3 <= len(nombre) <= 80):

@@ -1,11 +1,9 @@
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
-  
-  /* Estilo general del body */
+
   body {
     font-family: 'Fredoka', sans-serif;
     background-color: #fffafc;
@@ -13,8 +11,6 @@
     padding: 20px;
   }
   
-  
-  /* Encabezado */
   header {
     text-align: center;
     margin-bottom: 30px;
@@ -26,7 +22,6 @@
     margin-bottom: 15px;
   }
   
-  /* Menú de navegación */
   nav ul {
     list-style: none;
     display: flex;
@@ -48,7 +43,6 @@
     background-color: #ffafcc;
   }
   
-  /* Tabla de actividades */
   main h2 {
     text-align: center;
     margin-bottom: 15px;
