@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask import jsonify
+
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region, Comentario
@@ -7,6 +8,7 @@ from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
 from utils import sanitizar_texto
+
 
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
@@ -48,6 +50,7 @@ def api_actividades():
                    .options(joinedload(Actividad.comuna).joinedload(Comuna.region),
                             joinedload(Actividad.fotos),
                             joinedload(Actividad.temas),
+
                             joinedload(Actividad.contactos))
                    .paginate(page=pagina, per_page=por_pagina, error_out=False))
 
@@ -91,12 +94,11 @@ def guardar_actividad():
     email = sanitizar_texto(request.form.get("email"))
     celular = sanitizar_texto(request.form.get("celular"))
     sector = sanitizar_texto(request.form.get("sector"))
-    contactar = request.form.get("contactar")  # Nombre del medio (ej: WhatsApp)
+    contactar = request.form.get("contactar")  # Nomb
     contactar_info = sanitizar_texto(request.form.get("contactar-info"))
     descripcion = sanitizar_texto(request.form.get("descripcion"))
     tema = request.form.get("tema")
     otro_tema = sanitizar_texto(request.form.get("otro-tema"))
-
 
     fotos = request.files.getlist("foto")
 
@@ -127,6 +129,7 @@ def guardar_actividad():
         descripcion=descripcion
     )
     db.session.add(actividad)
+
     db.session.flush()
 
     tema_entry = ActividadTema(
@@ -136,6 +139,7 @@ def guardar_actividad():
     )
     db.session.add(tema_entry)
 
+
     if contactar and contactar_info:
         contacto = ContactarPor(
             nombre=contactar,
@@ -143,6 +147,7 @@ def guardar_actividad():
             actividad_id=actividad.id
         )
         db.session.add(contacto)
+
 
     for foto in fotos:
         if foto and foto.filename:
@@ -172,6 +177,7 @@ def obtener_comunas(region_id):
     return jsonify(comunas_json)
 
 
+
 @app.route("/api/estadisticas/por-dia")
 def estadisticas_por_dia():
     resultados = (
@@ -182,6 +188,7 @@ def estadisticas_por_dia():
     datos = [{"fecha": fecha.strftime("%d/%m"), "cantidad": cantidad} for fecha, cantidad in resultados]
     return jsonify(datos)
 
+
 @app.route("/api/estadisticas/por-tipo")
 def estadisticas_por_tipo():
     resultados = (
@@ -191,6 +198,7 @@ def estadisticas_por_tipo():
     )
     datos = [{"tema": tema, "cantidad": cantidad} for tema, cantidad in resultados]
     return jsonify(datos)
+
 
 @app.route("/api/estadisticas/por-horario")
 def estadisticas_por_horario():
@@ -214,6 +222,7 @@ def estadisticas_por_horario():
 
     datos = [{"mes": mes, **momentos} for mes, momentos in conteo.items()]
     return jsonify(datos)
+
 
 
 @app.route("/tarea2/comentarios/<int:actividad_id>")
@@ -253,4 +262,5 @@ def agregar_comentario():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
     app.run(debug=True)
