@@ -27,9 +27,11 @@
   </section>
 
   <div class="volver">
-    <li><a href="{{ url_for('portada') }}"><i class="fas fa-house"></i> Volver a la portada</a></li>
+
+    <a href="{{ url_for('portada') }}"><i class="fas fa-house"></i> Volver a la portada</a>
   </div>
 
+  <script src="{{ url_for('static', filename='js/actividades.js') }}"></script>
 
   <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
 </body>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Actividades</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/listado.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <h1>Listado de Actividades</h1>
+
+  <table id="tabla-actividades">
+    <thead>
+      <tr>
+        <th>Inicio</th>
+        <th>Término</th>
+        <th>Comuna</th>
+        <th>Sector</th>
+        <th>Tema</th>
+        <th>Nombre Organizador</th>
+        <th>Total Fotos</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+    </tbody>
+  </table>
+  <button onclick="location.href='{{ url_for('portada') }}'" class="boton-link">
+    <i class="fas fa-home"></i> Volver a la Portada
+  </button>
+  
+  <div id="detalle-actividad" style="display: none;">
+    <h2>Detalle de Actividad</h2>
+    <div id="info-actividad"></div>
+    <div id="galeria-fotos"></div>
+    <div id="comentarios" style="margin-top: 20px;">
+      <h3>Comentarios</h3>
+
+      <form id="form-comentario">
+        <input type="hidden" id="comentario-actividad-id">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" required minlength="3" maxlength="80"><br>
+
+        <label>Comentario:</label><br>
+        <textarea id="texto" rows="4" cols="50" required minlength="5"></textarea><br>
+
+        <button type="submit">Agregar comentario</button>
+        <p id="comentario-error" style="color: red;"></p>
+      </form>
+
+      <ul id="lista-comentarios"></ul>
+    </div>
+
+    <button id="volver-listado">
+        <i class="fas fa-arrow-left"></i> Volver al listado
+    </button>
+    <button onclick="location.href='{{ url_for('portada') }}'" class="boton-link">
+      <i class="fas fa-house"></i> Volver a la portada
+    </button>
+    
+  </div>
+
+  <div id="popup-foto" style="display: none;">
+    <img id="foto-grande" src="#" alt="Foto grande ampliada" width="800" height="600">
+    <button id="cerrar-popup">
+        <i class="fas fa-xmark"></i> Cerrar
+    </button>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/listado.js') }}"></script>
+  <div id="paginacion" style="margin-top: 20px; text-align: center;"></div>
+
+</body>
+</html>

@@ -1,11 +1,14 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask import jsonify
-from sqlalchemy.orm import joinedload
+
 from sqlalchemy import func
-from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region
+from sqlalchemy.orm import joinedload
+from models import db, Actividad, Comuna, ActividadTema, ContactarPor, Foto, Region, Comentario
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
+from utils import sanitizar_texto
+
 
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
@@ -16,7 +19,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://cc5002:programacionweb@localhost:3306/tarea2'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Registra la app con la instancia de SQLAlchemy
 db.init_app(app)
 
 @app.route('/')
@@ -48,7 +50,8 @@ def api_actividades():
                    .options(joinedload(Actividad.comuna).joinedload(Comuna.region),
                             joinedload(Actividad.fotos),
                             joinedload(Actividad.temas),
-                            joinedload(Actividad.contactos))  # <- importante
+
+                            joinedload(Actividad.contactos))
                    .paginate(page=pagina, per_page=por_pagina, error_out=False))
 
     actividades_json = []
@@ -58,7 +61,6 @@ def api_actividades():
             "region": act.comuna.region.nombre,
             "comuna": act.comuna.nombre,
             "sector": act.sector,
-            "organizador": act.email,
             "email": act.email,
             "celular": act.celular,
             "contactarPor": [
@@ -85,19 +87,18 @@ def guardar_actividad():
     print("Formulario recibido")
     errores = []
 
-    # === Validación del lado del servidor ===
     comuna_id = request.form.get("comuna")
-    nombre = request.form.get("nombre")
-    email = request.form.get("email")
-    celular = request.form.get("celular")
-    sector = request.form.get("sector")
-    contactar = request.form.get("contactar")
-    contactar_info = request.form.get("contactar-info")
     fecha_inicio = request.form.get("fecha-inicio")
     fecha_fin = request.form.get("fecha-fin")
-    descripcion = request.form.get("descripcion")
+    nombre = sanitizar_texto(request.form.get("nombre"))
+    email = sanitizar_texto(request.form.get("email"))
+    celular = sanitizar_texto(request.form.get("celular"))
+    sector = sanitizar_texto(request.form.get("sector"))
+    contactar = request.form.get("contactar")  # Nomb
+    contactar_info = sanitizar_texto(request.form.get("contactar-info"))
+    descripcion = sanitizar_texto(request.form.get("descripcion"))
     tema = request.form.get("tema")
-    otro_tema = request.form.get("otro-tema")
+    otro_tema = sanitizar_texto(request.form.get("otro-tema"))
 
     fotos = request.files.getlist("foto")
 
@@ -117,8 +118,6 @@ def guardar_actividad():
         regiones = Region.query.order_by(Region.nombre).all()
         return render_template("agregar.html", errores=errores, regiones=regiones)
 
-
-    # === Guardar en la base de datos ===
     actividad = Actividad(
         comuna_id=int(comuna_id),
         sector=sector,
@@ -130,9 +129,9 @@ def guardar_actividad():
         descripcion=descripcion
     )
     db.session.add(actividad)
-    db.session.flush()  # Necesario para obtener el id de la actividad
 
-    # === Temas ===
+    db.session.flush()
+
     tema_entry = ActividadTema(
         tema=tema,
         glosa_otro=otro_tema if tema == "otro" else None,
@@ -140,7 +139,7 @@ def guardar_actividad():
     )
     db.session.add(tema_entry)
 
-    # === ContactarPor ===
+
     if contactar and contactar_info:
         contacto = ContactarPor(
             nombre=contactar,
@@ -149,7 +148,7 @@ def guardar_actividad():
         )
         db.session.add(contacto)
 
-    # === Archivos (fotos) ===
+
     for foto in fotos:
         if foto and foto.filename:
             nombre_archivo = secure_filename(foto.filename)
@@ -178,7 +177,7 @@ def obtener_comunas(region_id):
     return jsonify(comunas_json)
 
 
-# Actividades por día
+
 @app.route("/api/estadisticas/por-dia")
 def estadisticas_por_dia():
     resultados = (
@@ -189,7 +188,7 @@ def estadisticas_por_dia():
     datos = [{"fecha": fecha.strftime("%d/%m"), "cantidad": cantidad} for fecha, cantidad in resultados]
     return jsonify(datos)
 
-# Actividades por tipo
+
 @app.route("/api/estadisticas/por-tipo")
 def estadisticas_por_tipo():
     resultados = (
@@ -200,7 +199,7 @@ def estadisticas_por_tipo():
     datos = [{"tema": tema, "cantidad": cantidad} for tema, cantidad in resultados]
     return jsonify(datos)
 
-# Actividades por mes y momento del día
+
 @app.route("/api/estadisticas/por-horario")
 def estadisticas_por_horario():
     actividades = Actividad.query.all()
@@ -225,8 +224,43 @@ def estadisticas_por_horario():
     return jsonify(datos)
 
 
+
+@app.route("/tarea2/comentarios/<int:actividad_id>")
+def obtener_comentarios(actividad_id):
+    comentarios = Comentario.query.filter_by(actividad_id=actividad_id)\
+                    .order_by(Comentario.fecha.desc()).all()
+    return jsonify([{
+      "nombre": c.nombre,
+      "texto": c.texto,
+      "fecha": c.fecha.strftime("%Y-%m-%d %H:%M")
+    } for c in comentarios])
+
+@app.route("/tarea2/comentario/agregar", methods=["POST"])
+def agregar_comentario():
+    data = request.get_json()
+    nombre = sanitizar_texto(data.get("nombre", ""))
+    texto = sanitizar_texto(data.get("texto", ""))
+
+    actividad_id = data.get("actividad_id")
+
+    if not (3 <= len(nombre) <= 80):
+        return jsonify({"success": False, "error": "Nombre debe tener entre 3 y 80 caracteres."})
+    if len(texto) < 5:
+        return jsonify({"success": False, "error": "Comentario debe tener al menos 5 caracteres."})
+
+    nuevo = Comentario(
+        nombre=nombre,
+        texto=texto,
+        fecha=datetime.now(),
+        actividad_id=actividad_id
+    )
+    db.session.add(nuevo)
+    db.session.commit()
+    return jsonify({"success": True})
+
+
 if __name__ == '__main__':
-    # Necesario para trabajar con SQLAlchemy fuera del contexto de una petición
     with app.app_context():
-        db.create_all()  # Solo si necesitas crear las tablas, si no ya están, puedes omitirlo
+        db.create_all()
+
     app.run(debug=True)

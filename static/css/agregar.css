@@ -1,0 +1,109 @@
+body {
+    font-family: 'Fredoka', sans-serif;
+    background-color: #fffafc;
+    color: #4b4b4b;
+    padding: 20px;
+  }
+  
+  header {
+    text-align: center;
+    background-color: #ffb6c1;
+    padding: 10px 0;
+    border-radius: 10px;
+  }
+  
+  h1 {
+    color: #fff;
+  }
+  
+  form {
+    background-color: #ffeff9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  fieldset {
+    border: 1px solid #f0c4d7;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+  
+  legend {
+    font-weight: bold;
+    color: #f7a0c7;
+  }
+  
+  label {
+    font-weight: normal;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="datetime-local"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #e0a0c3;
+  }
+  
+  button {
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #ff3b6b;
+  }
+  
+  #mensaje-confirmacion,
+  #mensaje-exito {
+    background-color: #ffb6c1;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  #volver-portada {
+    background-color: #ff69b4;
+    color: white;
+  }
+
+  fieldset {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+  
+  label {
+    display: inline-block;
+    width: 160px;
+    margin-top: 0.5rem;
+  }
+  
+  input, select, textarea {
+    width: calc(100% - 170px);
+    margin-bottom: 0.75rem;
+  }
+  
+  #agregar-foto {
+    margin-top: 0.5rem;
+  }
+  
