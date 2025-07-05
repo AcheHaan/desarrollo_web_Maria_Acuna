@@ -27,7 +27,7 @@
       <td th:text="${actividad.diaHoraInicio.toString().substring(0,10)}"></td>
       <td th:text="${actividad.sector}"></td>
       <td th:text="${actividad.nombre}"></td>
-      <td>-</td>
+      <td th:text="${actividad.nombresTemas}"></td>
       <td th:text="${promedios[actividad.id] > 0 ? #numbers.formatDecimal(promedios[actividad.id], 1, 2) : '-'}" class="nota"></td>
       <td>
         <select>

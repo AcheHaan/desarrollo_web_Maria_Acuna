@@ -11,16 +11,15 @@ public class ActividadTema {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TemaEnum tema;
 
-    @Column(name = "glosa_otro")
+    @Column(name = "glosa_otro", length = 15)
     private String glosaOtro;
 
     @ManyToOne
-    @JoinColumn(name = "actividad_id")
+    @JoinColumn(name = "actividad_id", nullable = false)
     private Actividad actividad;
-
-    // Getters y setters
 
     public Integer getId() {
         return id;
@@ -52,5 +51,8 @@ public class ActividadTema {
 
     public void setActividad(Actividad actividad) {
         this.actividad = actividad;
+    }
+    public String getNombreTema() {
+        return tema == TemaEnum.otro && glosaOtro != null ? glosaOtro : tema.name();
     }
 }

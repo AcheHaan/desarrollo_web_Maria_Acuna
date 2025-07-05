@@ -20,7 +20,6 @@ public class Comuna {
     @OneToMany(mappedBy = "comuna")
     private List<Actividad> actividades;
 
-    // Getters y Setters
 
     public Integer getId() {
         return id;

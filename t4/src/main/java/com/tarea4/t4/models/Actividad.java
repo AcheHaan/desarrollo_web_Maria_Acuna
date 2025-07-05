@@ -131,6 +131,13 @@ public class Actividad {
     return temas;
     }
 
+    public String getNombresTemas() {
+        if (temas == null || temas.isEmpty()) return "-";
+        return temas.stream()
+                    .map(ActividadTema::getNombreTema)
+                    .collect(java.util.stream.Collectors.joining(", "));
+    }
+
     public void setTemas(List<ActividadTema> temas) {
         this.temas = temas;
     }
