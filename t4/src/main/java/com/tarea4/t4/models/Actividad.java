@@ -46,7 +46,6 @@ public class Actividad {
 
     public Actividad() {}
 
-    // === Getters y Setters ===
 
     public Integer getId() {
         return id;
