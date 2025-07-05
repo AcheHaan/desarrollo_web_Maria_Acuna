@@ -17,7 +17,7 @@ Los gráficos están hechos con charts.js, y la data es aleatoria.
 
 
 
-# T2
+# T3
 
 ## Instalación
 
@@ -25,9 +25,27 @@ Los gráficos están hechos con charts.js, y la data es aleatoria.
 2. Crea y activa un entorno virtual
 3. Instala dependencias (`pip install -r requirements.txt`)
 4. Crea y carga la base de datos con `tarea2.sql`, `region-comuna.sql` y `tabla-comentario.sql`, además de crear y otorgar permisos a usuario.
-5. Ejecuta `flask run`
+5. Ejecuta `flask run` para abrir la página general
 
 ## Credenciales
 
 - DB: `cc5002`
 - Password: `programacionweb`
+
+  
+# T4
+
+## Instalación
+
+1. Clona el repositorio
+2. Crea y activa un entorno virtual
+3. Instala dependencias (`pip install -r requirements.txt`)
+4. Crea y carga la base de datos con `tarea2.sql`, `region-comuna.sql`, `tabla-comentario.sql` y `tabla-nota.sql`, además de crear y otorgar permisos a usuario.
+5. Ejecuta `flask run` para abrir la página general
+6. Para ejecutar la página para evaluar, hagalo desde vscode haciendole run a la t4application.java y entre a la pagina http://localhost:8080/evaluar
+
+## Credenciales
+
+- DB: `cc5002`
+- Password: `programacionweb`
+
